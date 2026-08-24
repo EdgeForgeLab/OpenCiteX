@@ -12,7 +12,6 @@ type KeyHints = {
 type Configured = Record<keyof ApiKeys, boolean>;
 
 const EMPTY_HINTS: KeyHints = { perplexity: null, openai: null, gemini: null };
-const EMPTY_CONFIGURED: Configured = { perplexity: false, openai: false, gemini: false };
 
 function configuredFromHints(hints: KeyHints): Configured {
   return {
