@@ -54,7 +54,7 @@ export const ENGINE_META: Record<
 > = {
   perplexity: { label: "Perplexity", model: "sonar", accent: "text-foreground" },
   openai: { label: "OpenAI", model: "gpt-4o", accent: "text-foreground" },
-  gemini: { label: "Gemini", model: "gemini-2.5-flash", accent: "text-foreground" },
+  gemini: { label: "Gemini", model: "gemini-3.6-flash", accent: "text-foreground" },
 };
 
 export const CATEGORY_META: Record<PromptCategory, { label: string; dotClass: string }> = {

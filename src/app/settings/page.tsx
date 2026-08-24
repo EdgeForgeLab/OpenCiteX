@@ -150,7 +150,7 @@ export default function SettingsPage() {
             </CardTitle>
             <CardDescription>
               Perplexity <code>sonar</code>, OpenAI <code>gpt-4o</code> / <code>gpt-4o-mini</code>, Gemini{" "}
-              <code>gemini-2.5-flash</code>. Blank fields keep the key already on the server.
+              <code>gemini-3.6-flash</code>. Blank fields keep the key already on the server.
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">

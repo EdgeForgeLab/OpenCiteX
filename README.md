@@ -13,7 +13,7 @@ Self-hosted. Your keys. One admin password. No SaaS markup.
 ## Features
 
 - **BYOK** — Perplexity / OpenAI / Gemini keys are encrypted with AES-256-GCM in Postgres and never sent back to the browser
-- **Multi-engine scans** — Perplexity `sonar`, OpenAI `gpt-4o` + web search, Gemini `gemini-2.5-flash` + Google Search grounding
+- **Multi-engine scans** — Perplexity `sonar`, OpenAI `gpt-4o` + web search, Gemini `gemini-3.6-flash` + Google Search grounding
 - **Visibility scoring** — mention rate, citation rate, and who intercepted the prompt when you are missing
 - **Prompt library** — brand, category, competitor, and scenario probes; seed a starter set or add your own
 - **Queue-friendly** — client-side sequential jobs with backoff, so a first scan does not burn rate limits or serverless timeouts
