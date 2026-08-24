@@ -12,6 +12,7 @@ const badgeVariants = cva(
         outline: "text-foreground",
         cited: "border-emerald-500/20 bg-emerald-500/10 text-emerald-400",
         mentioned: "border-amber-500/20 bg-amber-500/10 text-amber-400",
+        prompted: "border-slate-500/20 bg-slate-500/10 text-slate-500 dark:text-slate-300",
         hidden: "border-rose-500/20 bg-rose-500/10 text-rose-400",
         brand: "border-blue-500/20 bg-blue-500/10 text-blue-700 dark:text-blue-300",
         category: "border-violet-500/20 bg-violet-500/10 text-violet-700 dark:text-violet-300",

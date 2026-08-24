@@ -14,8 +14,8 @@ Self-hosted. Your keys. One admin password. No SaaS markup.
 
 - **BYOK** — Perplexity / OpenAI / Gemini keys are encrypted with AES-256-GCM in Postgres and never sent back to the browser
 - **Multi-engine scans** — Perplexity `sonar`, OpenAI `gpt-4o` + web search, Gemini `gemini-3.6-flash` + Google Search grounding
-- **Visibility scoring** — mention rate, citation rate, and who intercepted the prompt when you are missing
-- **Prompt library** — brand, category, competitor, and scenario probes; seed a starter set or add your own
+- **Visibility scoring** — unprompted mention rate, unprompted citation rate, and who intercepts category probes when you are missing
+- **Prompt library** — unprompted category / scenario / competitor probes plus brand probes that only score citations
 - **Queue-friendly** — client-side sequential jobs with backoff, so a first scan does not burn rate limits or serverless timeouts
 - **Deploy your way** — Vercel + Supabase, or Postgres in Docker and the app on Node
 
@@ -60,7 +60,7 @@ Open [http://localhost:3000](http://localhost:3000):
 
 1. **`/setup`** — admin password + recovery code (shown once)
 2. **`/settings`** — brand, domain, competitors, and API keys
-3. **`/prompts`** — keep or edit the starter probes
+3. **`/prompts`** — replace the recommended unprompted probe set, or add your own. Do not put the brand name in category queries.
 4. **`/dashboard`** — run a sequential scan
 
 The seed workspace is a MetaCitex example. Change it in Settings to your brand.
@@ -104,8 +104,9 @@ Rotating `ENCRYPTION_KEY` makes previously stored API keys unreadable. Paste the
 1. The dashboard queues `prompt × engine` jobs in the browser
 2. Each job `POST`s `/api/run` with **no keys in the body**
 3. The server decrypts workspace keys for that request, calls the engine, stores the answer and citation URLs
-4. `gpt-4o-mini` structured output (heuristic fallback without an OpenAI key) returns mention / citation / rank
-5. Rows that are not mentioned or not cited show **Fix with Metacitex**
+4. Mentions are scored with whole-word matching against the brand name, domain, and distinctive aliases. Generic terms such as GEO or AI are ignored. Citation is true only when a cited host matches the target domain
+5. Dashboard rates only count **unprompted** probes (the prompt does not name the brand). Brand-named prompts can still be Cited if the engine links your domain; repeating the name is labeled Prompted, not cited
+6. Rows that miss an unprompted mention or a citation show **Fix with Metacitex**
 
 The landing-page monitor card is **demo data**, not a live scan.
 

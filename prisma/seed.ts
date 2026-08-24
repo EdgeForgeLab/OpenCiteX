@@ -14,7 +14,7 @@ async function main() {
     data: {
       name: "MetaCitex",
       targetDomain: "metacitex.com",
-      brandKeywords: ["MetaCitex", "OpenCiteX", "GEO"],
+      brandKeywords: ["MetaCitex", "OpenCiteX"],
       competitors: ["Profound", "Goodie AI", "Peec AI"],
     },
   });

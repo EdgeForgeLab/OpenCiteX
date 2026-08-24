@@ -8,7 +8,7 @@ const CITATION = [8, 10, 12, 14, 13, 18, 21, 24, 26, 29, 32, 36, 39, 42];
 
 const ROWS = [
   { prompt: "Best GEO platforms in 2026", status: "cited" as const, label: "Cited" },
-  { prompt: "MetaCitex vs Profound", status: "mentioned" as const, label: "Mentioned" },
+  { prompt: "Best tools to track AI visibility", status: "mentioned" as const, label: "Mentioned" },
   { prompt: "How to get cited in AI search", status: "hidden" as const, label: "Hidden" },
 ];
 

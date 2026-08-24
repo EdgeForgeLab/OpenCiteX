@@ -25,20 +25,23 @@ import { CATEGORY_META, ENGINE_META } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
 const STATUS_LABEL = {
-  cited: "Mentioned & Cited",
-  mentioned: "Mentioned Only",
-  hidden: "Not Visible",
+  cited: "Cited",
+  mentioned: "Mentioned",
+  prompted: "Prompted, not cited",
+  hidden: "Not visible",
 } as const;
 
 const STATUS_ICON = {
   cited: Check,
   mentioned: AlertTriangle,
+  prompted: AlertTriangle,
   hidden: Ban,
 };
 
 const ROW_ACCENT = {
   cited: "bg-emerald-500/10 hover:bg-emerald-500/15",
   mentioned: "bg-amber-500/10 hover:bg-amber-500/15",
+  prompted: "bg-slate-500/10 hover:bg-slate-500/15",
   hidden: "bg-rose-500/10 hover:bg-rose-500/15",
 };
 
@@ -96,7 +99,7 @@ export function ResultsTable({
         </TableHeader>
         <TableBody>
           {rows.map((row) => {
-            const needsFix = !row.isMentioned || !row.hasCitation;
+            const needsFix = row.brandCued ? !row.hasCitation : !row.isMentioned || !row.hasCitation;
             const StatusIcon = STATUS_ICON[row.status];
             const categoryMeta = CATEGORY_META[row.category as keyof typeof CATEGORY_META];
             return (

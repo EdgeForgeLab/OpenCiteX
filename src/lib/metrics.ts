@@ -1,5 +1,13 @@
 import type { Engine } from "@prisma/client";
-import { findInterceptor } from "@/lib/citations";
+import {
+  citationRank,
+  findInterceptor,
+  hasTargetCitation,
+  promptCuesBrand,
+  textMentionsBrand,
+} from "@/lib/citations";
+
+export type VisibilityStatus = "cited" | "mentioned" | "prompted" | "hidden";
 
 export type ResultRow = {
   id: string;
@@ -9,12 +17,13 @@ export type ResultRow = {
   engine: Engine;
   isMentioned: boolean;
   hasCitation: boolean;
+  brandCued: boolean;
   rankPosition: number;
   rawText: string;
   citations: string[];
   createdAt: string;
   interceptedBy: string | null;
-  status: "cited" | "mentioned" | "hidden";
+  status: VisibilityStatus;
 };
 
 export type DashboardMetrics = {
@@ -22,26 +31,30 @@ export type DashboardMetrics = {
   citationRate: number;
   topInterceptor: string | null;
   totalRuns: number;
+  unpromptedRuns: number;
   mentionedCount: number;
   citedCount: number;
 };
 
-export function visibilityStatus(isMentioned: boolean, hasCitation: boolean) {
-  if (isMentioned && hasCitation) return "cited" as const;
-  if (isMentioned) return "mentioned" as const;
-  return "hidden" as const;
+export function visibilityStatus(input: {
+  isMentioned: boolean;
+  hasCitation: boolean;
+  brandCued: boolean;
+}): VisibilityStatus {
+  if (input.hasCitation) return "cited";
+  if (input.brandCued) return input.isMentioned ? "prompted" : "hidden";
+  if (input.isMentioned) return "mentioned";
+  return "hidden";
 }
 
-export function computeMetrics(
-  rows: ResultRow[],
-): DashboardMetrics {
-  const totalRuns = rows.length;
-  const mentionedCount = rows.filter((row) => row.isMentioned).length;
-  const citedCount = rows.filter((row) => row.hasCitation).length;
+export function computeMetrics(rows: ResultRow[]): DashboardMetrics {
+  const unprompted = rows.filter((row) => !row.brandCued);
+  const mentionedCount = unprompted.filter((row) => row.isMentioned).length;
+  const citedCount = unprompted.filter((row) => row.hasCitation).length;
   const interceptCounts = new Map<string, number>();
 
-  for (const row of rows) {
-    if ((row.isMentioned && row.hasCitation) || !row.interceptedBy) continue;
+  for (const row of unprompted) {
+    if (row.isMentioned || !row.interceptedBy) continue;
     interceptCounts.set(
       row.interceptedBy,
       (interceptCounts.get(row.interceptedBy) ?? 0) + 1,
@@ -50,12 +63,14 @@ export function computeMetrics(
 
   const topInterceptor =
     Array.from(interceptCounts.entries()).sort((a, b) => b[1] - a[1])[0]?.[0] ?? null;
+  const unpromptedRuns = unprompted.length;
 
   return {
-    visibilityScore: totalRuns ? mentionedCount / totalRuns : 0,
-    citationRate: totalRuns ? citedCount / totalRuns : 0,
+    visibilityScore: unpromptedRuns ? mentionedCount / unpromptedRuns : 0,
+    citationRate: unpromptedRuns ? citedCount / unpromptedRuns : 0,
     topInterceptor,
-    totalRuns,
+    totalRuns: rows.length,
+    unpromptedRuns,
     mentionedCount,
     citedCount,
   };
@@ -72,18 +87,46 @@ export function toResultRow(
     rawText: string;
     citations: string[];
     createdAt: Date;
-    prompt: { text: string; category: string; project: { name: string; competitors: string[] } };
+    prompt: {
+      text: string;
+      category: string;
+      project: {
+        name: string;
+        targetDomain: string;
+        brandKeywords: string[];
+        competitors: string[];
+      };
+    };
   },
 ): ResultRow {
+  const brandCued = promptCuesBrand(
+    result.prompt.text,
+    result.prompt.project.name,
+    result.prompt.project.brandKeywords,
+    result.prompt.project.targetDomain,
+  );
+  const isMentioned = textMentionsBrand(
+    result.rawText,
+    result.prompt.project.name,
+    result.prompt.project.brandKeywords,
+    result.prompt.project.targetDomain,
+  );
+  const hasCitation = hasTargetCitation(
+    result.citations,
+    result.prompt.project.targetDomain,
+  );
+  const rankPosition = citationRank(result.citations, result.prompt.project.targetDomain);
+
   return {
     id: result.id,
     promptId: result.promptId,
     promptText: result.prompt.text,
     category: result.prompt.category,
     engine: result.engine,
-    isMentioned: result.isMentioned,
-    hasCitation: result.hasCitation,
-    rankPosition: result.rankPosition,
+    isMentioned,
+    hasCitation,
+    brandCued,
+    rankPosition,
     rawText: result.rawText,
     citations: result.citations,
     createdAt: result.createdAt.toISOString(),
@@ -91,9 +134,8 @@ export function toResultRow(
       rawText: result.rawText,
       citations: result.citations,
       competitors: result.prompt.project.competitors,
-      brandName: result.prompt.project.name,
-      isMentioned: result.isMentioned,
+      isMentioned,
     }),
-    status: visibilityStatus(result.isMentioned, result.hasCitation),
+    status: visibilityStatus({ isMentioned, hasCitation, brandCued }),
   };
 }

@@ -6,37 +6,48 @@ export function buildDefaultPrompts(input: {
   competitors: string[];
 }): { text: string; category: PromptCategory }[] {
   const brand = input.brandName.trim() || "our brand";
-  const domain = input.targetDomain.trim() || "example.com";
+  const rivals = input.competitors.map((item) => item.trim()).filter(Boolean).slice(0, 3);
   const prompts: { text: string; category: PromptCategory }[] = [
-    { category: "brand", text: `What is ${brand}?` },
+    {
+      category: "category",
+      text: "Best tools to track brand visibility in ChatGPT, Perplexity, and Gemini",
+    },
+    {
+      category: "category",
+      text: "What are the best AI search citation platforms in 2026?",
+    },
+    {
+      category: "category",
+      text: "How do marketing teams monitor whether ChatGPT, Perplexity, or Gemini cite their domain?",
+    },
+    {
+      category: "scenario",
+      text: "I need to see if AI answer engines mention my company. What should I use?",
+    },
+    {
+      category: "scenario",
+      text: "How can a startup get cited by Perplexity, ChatGPT, and Gemini?",
+    },
     {
       category: "brand",
-      text: `Is ${brand} (${domain}) a reputable product, and who is it for?`,
+      text: `What is ${brand}?`,
     },
     {
-      category: "category",
-      text: "What are the best generative engine optimization (GEO) platforms in 2026?",
-    },
-    {
-      category: "category",
-      text: "Best tools to track AI search citations and brand visibility in ChatGPT, Perplexity, and Gemini",
-    },
-    {
-      category: "scenario",
-      text: `How can ${domain} get cited by AI answer engines like Perplexity, ChatGPT, and Gemini?`,
-    },
-    {
-      category: "scenario",
-      text: `I want ${brand} to appear when people ask AI for recommendations in our category. What should I do?`,
+      category: "brand",
+      text: `What is the official website for ${brand}?`,
     },
   ];
 
-  for (const competitor of input.competitors.slice(0, 3)) {
-    const name = competitor.trim();
-    if (!name) continue;
+  if (rivals.length >= 2) {
     prompts.push({
       category: "competitor",
-      text: `${brand} vs ${name}: which is better for AI search / GEO visibility, and why?`,
+      text: `${rivals.slice(0, 3).join(" vs ")}: which is better for AI search visibility tracking?`,
+    });
+  }
+  if (rivals[0]) {
+    prompts.push({
+      category: "competitor",
+      text: `What are the main alternatives to ${rivals[0]} for tracking AI citations?`,
     });
   }
 

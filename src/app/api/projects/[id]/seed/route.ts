@@ -7,7 +7,7 @@ import { buildDefaultPrompts } from "@/lib/prompts";
 export const dynamic = "force-dynamic";
 
 export async function POST(
-  _request: Request,
+  request: Request,
   { params }: { params: { id: string } },
 ) {
   const guest = await unauthorizedIfGuest();
@@ -15,6 +15,17 @@ export async function POST(
   try {
     const project = await prisma.project.findUnique({ where: { id: params.id } });
     if (!project) return jsonError("Project not found.", 404);
+
+    let replace = false;
+    const raw = await request.text();
+    if (raw) {
+      const body = JSON.parse(raw) as { replace?: boolean };
+      replace = Boolean(body.replace);
+    }
+
+    if (replace) {
+      await prisma.prompt.deleteMany({ where: { projectId: project.id } });
+    }
 
     const existing = await prisma.prompt.findMany({
       where: { projectId: project.id },
@@ -43,7 +54,7 @@ export async function POST(
       orderBy: { category: "asc" },
     });
 
-    return NextResponse.json({ added: prompts.length, prompts: all });
+    return NextResponse.json({ added: prompts.length, replaced: replace, prompts: all });
   } catch (error) {
     return jsonError(
       error instanceof Error ? error.message : "Failed to seed prompts.",

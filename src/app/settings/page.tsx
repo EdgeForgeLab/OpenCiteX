@@ -22,7 +22,7 @@ type Project = {
 const EMPTY_PROJECT = {
   name: "MetaCitex",
   targetDomain: "metacitex.com",
-  brandKeywords: "MetaCitex, GEO, AI citations",
+  brandKeywords: "MetaCitex, OpenCiteX",
   competitors: "Profound, Goodie AI, Peec AI",
 };
 
@@ -149,7 +149,7 @@ export default function SettingsPage() {
               BYOK API keys
             </CardTitle>
             <CardDescription>
-              Perplexity <code>sonar</code>, OpenAI <code>gpt-4o</code> / <code>gpt-4o-mini</code>, Gemini{" "}
+              Perplexity <code>sonar</code>, OpenAI <code>gpt-4o</code>, Gemini{" "}
               <code>gemini-3.6-flash</code>. Blank fields keep the key already on the server.
             </CardDescription>
           </CardHeader>
@@ -219,7 +219,7 @@ export default function SettingsPage() {
           <CardHeader>
             <CardTitle>Project settings</CardTitle>
             <CardDescription>
-              Brand, domain, and competitors used when scoring mentions and intercepts.
+              Brand name, domain, distinctive aliases, and competitors used to score mentions and intercepts.
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -251,7 +251,11 @@ export default function SettingsPage() {
                 onChange={(event) =>
                   setProject((current) => ({ ...current, brandKeywords: event.target.value }))
                 }
+                placeholder="MetaCitex, OpenCiteX"
               />
+              <p className="text-xs text-muted-foreground">
+                Alternate spellings of the brand. Do not add the category you sell into.
+              </p>
             </div>
             <div className="space-y-2">
               <Label htmlFor="competitors">Competitors (comma-separated)</Label>

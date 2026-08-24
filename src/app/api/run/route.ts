@@ -35,13 +35,11 @@ export async function POST(request: Request) {
 
     const output = await queryEngine(payload.engine, keys, prompt.text);
     const parsed = await parseVisibility({
-      openaiKey: keys.openai,
       text: output.text,
       citations: output.citations,
       brandName: prompt.project.name,
       brandKeywords: prompt.project.brandKeywords,
       targetDomain: prompt.project.targetDomain,
-      competitors: prompt.project.competitors,
     });
 
     const result = await prisma.result.create({

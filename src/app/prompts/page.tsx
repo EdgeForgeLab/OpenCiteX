@@ -41,7 +41,7 @@ export default function PromptsPage() {
   const [loading, setLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [text, setText] = useState("");
-  const [category, setCategory] = useState<PromptCategory>("brand");
+  const [category, setCategory] = useState<PromptCategory>("category");
   const [saving, setSaving] = useState(false);
 
   const load = useCallback(async (id: string) => {
@@ -77,7 +77,7 @@ export default function PromptsPage() {
 
   function resetForm() {
     setText("");
-    setCategory("brand");
+    setCategory("category");
   }
 
   async function addPrompt() {
@@ -118,18 +118,35 @@ export default function PromptsPage() {
     }
   }
 
-  async function seedDefaults() {
+  async function seedDefaults(replace = false) {
     if (!projectId) return;
+    if (
+      replace &&
+      !window.confirm(
+        "Replace all prompts with the recommended unprompted probe set? Existing scan results for those prompts will be deleted.",
+      )
+    ) {
+      return;
+    }
     try {
-      const response = await fetch(`/api/projects/${projectId}/seed`, { method: "POST" });
+      const response = await fetch(`/api/projects/${projectId}/seed`, {
+        method: "POST",
+        headers: replace ? { "Content-Type": "application/json" } : undefined,
+        body: replace ? JSON.stringify({ replace: true }) : undefined,
+      });
       const payload = (await response.json()) as {
         prompts?: PromptRow[];
         added?: number;
+        replaced?: boolean;
         error?: string;
       };
       if (!response.ok) throw new Error(payload.error || "Seed failed.");
       setPrompts(payload.prompts ?? []);
-      toast.success(`Added ${payload.added ?? 0} starter prompts.`);
+      toast.success(
+        payload.replaced
+          ? "Replaced with the recommended probe set."
+          : `Added ${payload.added ?? 0} starter prompts.`,
+      );
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Seed failed.");
     }
@@ -142,12 +159,16 @@ export default function PromptsPage() {
           <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">Probe set</p>
           <h1 className="mt-1 font-sans text-4xl font-semibold tracking-tight">Prompts</h1>
           <p className="mt-2 max-w-2xl text-sm text-muted-foreground">
-            Brand, category, competitor, and scenario queries sent sequentially to each engine.
+            Category, scenario, and competitor probes must not name your brand — those measure
+            unprompted visibility. Brand probes only check whether engines cite you when asked.
           </p>
         </div>
         <div className="flex flex-wrap gap-2">
-          <Button variant="outline" onClick={() => void seedDefaults()} disabled={!projectId}>
-            Seed starter prompts
+          <Button variant="outline" onClick={() => void seedDefaults(false)} disabled={!projectId}>
+            Add missing starters
+          </Button>
+          <Button variant="outline" onClick={() => void seedDefaults(true)} disabled={!projectId}>
+            Replace recommended set
           </Button>
           <Button onClick={() => setDialogOpen(true)} disabled={!projectId}>
             <Plus />
@@ -167,7 +188,8 @@ export default function PromptsPage() {
           <DialogHeader>
             <DialogTitle>Add prompt</DialogTitle>
             <DialogDescription>
-              New queries are queued with the rest of the probe set on the next scan.
+              New queries are queued with the rest of the probe set on the next scan. Leave the
+              brand name out unless this is a Brand probe.
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4">
@@ -212,7 +234,7 @@ export default function PromptsPage() {
                 id="prompt"
                 value={text}
                 onChange={(event) => setText(event.target.value)}
-                placeholder="What are the best GEO platforms in 2026?"
+                placeholder="Best tools to track brand visibility in ChatGPT, Perplexity, and Gemini"
               />
             </div>
             <div className="flex justify-end gap-2">

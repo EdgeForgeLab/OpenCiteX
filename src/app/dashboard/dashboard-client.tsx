@@ -142,8 +142,8 @@ export function DashboardClient() {
               ? (
                 <>
                   Tracking {project.name} on{" "}
-                  <span className="font-mono text-foreground">{project.targetDomain}</span> across
-                  Perplexity, GPT-4o, and Gemini.
+                  <span className="font-mono text-foreground">{project.targetDomain}</span>.
+                  Mention and citation rates only count probes that do not name your brand.
                 </>
               )
               : "Create a workspace in Settings to start measuring AI citations."}

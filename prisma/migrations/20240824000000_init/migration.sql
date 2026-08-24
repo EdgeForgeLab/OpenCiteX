@@ -17,6 +17,28 @@ CREATE TABLE "Project" (
 );
 
 -- CreateTable
+CREATE TABLE "Credential" (
+    "id" TEXT NOT NULL DEFAULT 'workspace',
+    "ciphertext" TEXT NOT NULL,
+    "hint" JSONB NOT NULL DEFAULT '{}',
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "Credential_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "Admin" (
+    "id" TEXT NOT NULL DEFAULT 'admin',
+    "passwordHash" TEXT NOT NULL,
+    "recoveryCodeHash" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "Admin_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
 CREATE TABLE "Prompt" (
     "id" TEXT NOT NULL,
     "projectId" TEXT NOT NULL,

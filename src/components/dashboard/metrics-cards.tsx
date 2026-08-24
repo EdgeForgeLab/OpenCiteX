@@ -12,25 +12,30 @@ export function MetricsCards({
   metrics: DashboardMetrics | null;
   loading: boolean;
 }) {
+  const hasProbes = Boolean(metrics && metrics.unpromptedRuns > 0);
   const items = [
     {
-      label: "Overall AI Visibility",
-      value: metrics ? formatPercent(metrics.visibilityScore) : "—",
-      hint: metrics ? `${metrics.mentionedCount}/${metrics.totalRuns} mentioned` : "No runs yet",
+      label: "Unprompted mention rate",
+      value: hasProbes ? formatPercent(metrics!.visibilityScore) : "—",
+      hint: hasProbes
+        ? `${metrics!.mentionedCount}/${metrics!.unpromptedRuns} answers name you without being asked`
+        : "Brand-named prompts are excluded. Add category probes.",
       icon: Radar,
       mono: true,
     },
     {
-      label: "Direct Citation Rate",
-      value: metrics ? formatPercent(metrics.citationRate) : "—",
-      hint: metrics ? `${metrics.citedCount}/${metrics.totalRuns} cited` : "No citations yet",
+      label: "Unprompted citation rate",
+      value: hasProbes ? formatPercent(metrics!.citationRate) : "—",
+      hint: hasProbes
+        ? `${metrics!.citedCount}/${metrics!.unpromptedRuns} answers cite your domain`
+        : "No unprompted probes in this scan.",
       icon: Quote,
       mono: true,
     },
     {
-      label: "Top Intercepting Competitor",
+      label: "Top intercepting competitor",
       value: metrics?.topInterceptor ?? "None detected",
-      hint: "Who shows up when you don't",
+      hint: "Who appears on unprompted probes when you do not",
       icon: Swords,
       mono: Boolean(metrics?.topInterceptor),
       critical: Boolean(metrics?.topInterceptor),
