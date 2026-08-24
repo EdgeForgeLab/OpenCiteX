@@ -1,0 +1,21 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: opencitex-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: opencitex
+      POSTGRES_PASSWORD: opencitex
+      POSTGRES_DB: opencitex
+    ports:
+      - "5432:5432"
+    volumes:
+      - opencitex_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U opencitex -d opencitex"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  opencitex_pgdata:

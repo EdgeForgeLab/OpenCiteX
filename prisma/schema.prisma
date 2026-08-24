@@ -1,0 +1,73 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum PromptCategory {
+  brand
+  category
+  competitor
+  scenario
+}
+
+enum Engine {
+  perplexity
+  openai
+  gemini
+}
+
+model Project {
+  id            String   @id @default(cuid())
+  name          String
+  targetDomain  String
+  brandKeywords String[] @default([])
+  competitors   String[] @default([])
+  createdAt     DateTime @default(now())
+  prompts       Prompt[]
+}
+
+model Credential {
+  id         String   @id @default("workspace")
+  ciphertext String
+  hint       Json     @default("{}")
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+model Admin {
+  id               String   @id @default("admin")
+  passwordHash     String
+  recoveryCodeHash String
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+}
+
+model Prompt {
+  id        String         @id @default(cuid())
+  projectId String
+  project   Project        @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  text      String
+  category  PromptCategory
+  results   Result[]
+
+  @@index([projectId])
+}
+
+model Result {
+  id           String   @id @default(cuid())
+  promptId     String
+  prompt       Prompt   @relation(fields: [promptId], references: [id], onDelete: Cascade)
+  engine       Engine
+  isMentioned  Boolean
+  hasCitation  Boolean
+  rankPosition Int      @default(0)
+  rawText      String
+  citations    String[] @default([])
+  createdAt    DateTime @default(now())
+
+  @@index([promptId, engine, createdAt])
+}
