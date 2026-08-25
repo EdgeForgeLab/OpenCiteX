@@ -7,7 +7,7 @@ import { HeroCopy } from "@/components/landing/hero-copy";
 import { HeroMonitor } from "@/components/landing/hero-monitor";
 import { ENGINE_META, PROVIDER_IDS } from "@/lib/types";
 
-const DOCS_URL = "https://github.com/edgeforgelab/OpenCiteX/blob/main/docs/README.md";
+const DOCS_URL = "https://edgeforgelab.github.io/OpenCiteX/#/";
 const GITHUB_URL = "https://github.com/edgeforgelab/OpenCiteX";
 
 export default function HomePage() {
