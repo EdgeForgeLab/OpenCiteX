@@ -2,9 +2,14 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { engineSchema, errorMessage, jsonError } from "@/lib/api";
 import { unauthorizedIfGuest } from "@/lib/auth";
-import { readWorkspaceKeys } from "@/lib/credentials";
+import {
+  readWorkspaceAnalyzer,
+  readWorkspaceKeys,
+  readWorkspacePace,
+} from "@/lib/credentials";
 import { queryEngine } from "@/lib/engines";
 import { parseVisibility } from "@/lib/parser";
+import { markProviderFinished, waitProviderGap } from "@/lib/pace-gate";
 import { prisma } from "@/lib/prisma";
 import { toResultRow } from "@/lib/metrics";
 
@@ -13,6 +18,7 @@ export const dynamic = "force-dynamic";
 const runSchema = z.object({
   promptId: z.string().min(1),
   engine: engineSchema,
+  jobId: z.string().min(1).optional(),
 });
 
 export async function POST(request: Request) {
@@ -22,29 +28,57 @@ export async function POST(request: Request) {
     const payload = runSchema.parse(await request.json());
     const prompt = await prisma.prompt.findUnique({
       where: { id: payload.promptId },
-      include: { project: true },
+      include: { brand: true },
     });
 
     if (!prompt) return jsonError("Prompt not found.", 404);
 
-    const keys = await readWorkspaceKeys();
+    if (payload.jobId) {
+      const job = await prisma.job.findUnique({ where: { id: payload.jobId } });
+      if (!job) return jsonError("Job not found.", 404);
+      if (job.status === "cancelled") return jsonError("Job was cancelled.", 409);
+    }
+
+    const [keys, analyzer, paceMs] = await Promise.all([
+      readWorkspaceKeys(),
+      readWorkspaceAnalyzer(),
+      readWorkspacePace(),
+    ]);
     const engineKey = keys[payload.engine];
     if (!engineKey) {
       return jsonError(`No ${payload.engine} API key saved in Settings.`, 400);
     }
 
     const output = await queryEngine(payload.engine, keys, prompt.text);
-    const parsed = await parseVisibility({
+    markProviderFinished(payload.engine);
+
+    const baseInput = {
       text: output.text,
       citations: output.citations,
-      brandName: prompt.project.name,
-      brandKeywords: prompt.project.brandKeywords,
-      targetDomain: prompt.project.targetDomain,
-    });
+      brandName: prompt.brand.name,
+      aliases: prompt.brand.aliases,
+      targetDomain: prompt.brand.targetDomain,
+      competitors: prompt.brand.competitors,
+    };
+
+    let parsed = await parseVisibility(baseInput);
+    let analyzed = false;
+    const analyzerKey = analyzer ? keys[analyzer] : "";
+    if (!parsed.is_mentioned && analyzer && analyzerKey) {
+      await waitProviderGap(analyzer, paceMs[analyzer]);
+      parsed = await parseVisibility({
+        ...baseInput,
+        analyzerId: analyzer,
+        analyzerKey,
+      });
+      analyzed = true;
+      markProviderFinished(analyzer);
+    }
 
     const result = await prisma.result.create({
       data: {
         promptId: prompt.id,
+        jobId: payload.jobId,
         engine: payload.engine,
         isMentioned: parsed.is_mentioned,
         hasCitation: parsed.has_citation,
@@ -53,13 +87,14 @@ export async function POST(request: Request) {
         citations: parsed.cited_domains.length > 0 ? parsed.cited_domains : output.citations,
       },
       include: {
-        prompt: { include: { project: true } },
+        prompt: { include: { brand: true } },
       },
     });
 
     return NextResponse.json({
       result: toResultRow(result),
       parsed,
+      analyzed,
     });
   } catch (error) {
     const status = error instanceof z.ZodError ? 400 : 502;

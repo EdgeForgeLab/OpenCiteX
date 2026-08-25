@@ -19,7 +19,7 @@ const geistMono = localFont({
 export const metadata: Metadata = {
   title: "OpenCiteX — GEO visibility dashboard",
   description:
-    "Open-source generative engine optimization radar. Measure brand mentions and citations across Perplexity, GPT-4o, and Gemini.",
+    "Open-source generative engine optimization radar. Measure brand mentions and citations across Perplexity, OpenAI, Gemini, DeepSeek, and Qwen.",
 };
 
 const themeBootScript = `(function(){try{var t=localStorage.getItem("opencitex.theme");var d=t!=="light";document.documentElement.classList.toggle("dark",d);document.documentElement.style.colorScheme=d?"dark":"light";}catch(e){document.documentElement.classList.add("dark");document.documentElement.style.colorScheme="dark";}})();`;

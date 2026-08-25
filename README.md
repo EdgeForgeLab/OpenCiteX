@@ -12,14 +12,13 @@ Self-hosted. Your keys. One admin password. No SaaS markup.
 
 ## Features
 
-- **BYOK** — Perplexity / OpenAI / Gemini keys are encrypted with AES-256-GCM in Postgres and never sent back to the browser
-- **Multi-engine scans** — Perplexity `sonar`, OpenAI `gpt-4o` + web search, Gemini `gemini-3.6-flash` + Google Search grounding
-- **Visibility scoring** — unprompted mention rate, unprompted citation rate, and who intercepts category probes when you are missing
-- **Prompt library** — unprompted category / scenario / competitor probes plus brand probes that only score citations
+- **BYOK** — Perplexity, OpenAI, Gemini, DeepSeek, and Qwen keys are encrypted with AES-256-GCM in Postgres and never sent back to the browser
+- **Optional analysis model** — pick one saved provider to catch brand mentions that string matching misses; citations stay URL-based
+- **Multi-engine scans** — Perplexity `sonar`, OpenAI `gpt-4o` + web search, Gemini `gemini-3.6-flash` + Google Search grounding, DeepSeek `deepseek-chat`, Qwen `qwen-plus` + search
+- **Visibility scoring** — unprompted mention rate, citation rate, category/scenario interception rate, and average citation rank
+- **Prompt matrix** — each brand stores name, domain, aliases, competitors, category, and language; saving expands Brand / Category / Competitor / Scenario probes
 - **Queue-friendly** — client-side sequential jobs with backoff, so a first scan does not burn rate limits or serverless timeouts
 - **Deploy your way** — Vercel + Supabase, or Postgres in Docker and the app on Node
-
-Gaps in the results table can be sent to [Metacitex](https://metacitex.com) to generate a fix.
 
 ## Stack
 
@@ -59,11 +58,11 @@ npm run dev
 Open [http://localhost:3000](http://localhost:3000):
 
 1. **`/setup`** — admin password + recovery code (shown once)
-2. **`/settings`** — brand, domain, competitors, and API keys
-3. **`/prompts`** — replace the recommended unprompted probe set, or add your own. Do not put the brand name in category queries.
-4. **`/dashboard`** — run a sequential scan
+2. **`/byok`** — paste Perplexity, OpenAI, Gemini, DeepSeek, and Qwen keys (shared across brands)
+3. **`/brands`** — add brands; saving generates the 4-dimension probe set
+4. **`/dashboard`** — pick a brand and run a sequential scan
 
-The seed workspace is a MetaCitex example. Change it in Settings to your brand.
+The seed workspace includes a MetaCitex example brand. Change it under Brands.
 
 ## Deploy on Vercel
 
@@ -106,7 +105,6 @@ Rotating `ENCRYPTION_KEY` makes previously stored API keys unreadable. Paste the
 3. The server decrypts workspace keys for that request, calls the engine, stores the answer and citation URLs
 4. Mentions are scored with whole-word matching against the brand name, domain, and distinctive aliases. Generic terms such as GEO or AI are ignored. Citation is true only when a cited host matches the target domain
 5. Dashboard rates only count **unprompted** probes (the prompt does not name the brand). Brand-named prompts can still be Cited if the engine links your domain; repeating the name is labeled Prompted, not cited
-6. Rows that miss an unprompted mention or a citation show **Fix with Metacitex**
 
 The landing-page monitor card is **demo data**, not a live scan.
 

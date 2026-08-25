@@ -4,36 +4,41 @@ import { buildDefaultPrompts } from "../src/lib/prompts";
 const prisma = new PrismaClient();
 
 async function main() {
-  const existing = await prisma.project.findFirst();
+  const existing = await prisma.brand.findFirst();
   if (existing) {
-    console.log(`Seed skipped: project "${existing.name}" already exists.`);
+    console.log(`Seed skipped: brand "${existing.name}" already exists.`);
     return;
   }
 
-  const project = await prisma.project.create({
+  const brand = await prisma.brand.create({
     data: {
       name: "MetaCitex",
       targetDomain: "metacitex.com",
-      brandKeywords: ["MetaCitex", "OpenCiteX"],
+      aliases: ["MetaCitex", "OpenCiteX"],
+      industryCategory: "AI search visibility tracking",
+      description: "monitor whether ChatGPT, Perplexity, or Gemini cite my domain",
+      language: "en",
       competitors: ["Profound", "Goodie AI", "Peec AI"],
     },
   });
 
   const prompts = buildDefaultPrompts({
-    brandName: project.name,
-    targetDomain: project.targetDomain,
-    competitors: project.competitors,
+    name: brand.name,
+    industryCategory: brand.industryCategory,
+    description: brand.description,
+    competitors: brand.competitors,
+    language: brand.language,
   });
 
   await prisma.prompt.createMany({
     data: prompts.map((prompt) => ({
-      projectId: project.id,
+      brandId: brand.id,
       text: prompt.text,
       category: prompt.category,
     })),
   });
 
-  console.log(`Seeded project ${project.id} with ${prompts.length} prompts.`);
+  console.log(`Seeded brand ${brand.id} with ${prompts.length} prompts.`);
 }
 
 main()

@@ -1,15 +1,17 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
-import { jsonError, errorMessage } from "@/lib/api";
+import { errorMessage, jsonError } from "@/lib/api";
 import { unauthorizedIfGuest } from "@/lib/auth";
 
 export const dynamic = "force-dynamic";
 
+const categorySchema = z.enum(["brand", "category", "competitor", "scenario"]);
+
 const createSchema = z.object({
-  projectId: z.string().min(1),
-  text: z.string().min(8, "Prompt text is too short."),
-  category: z.enum(["brand", "category", "competitor", "scenario"]),
+  brandId: z.string().min(1),
+  text: z.string().min(1),
+  category: categorySchema,
 });
 
 export async function GET(request: Request) {
@@ -17,13 +19,14 @@ export async function GET(request: Request) {
   if (guest) return guest;
   try {
     const { searchParams } = new URL(request.url);
-    const projectId = searchParams.get("projectId");
-    if (!projectId) return jsonError("projectId is required.");
+    const brandId = searchParams.get("brandId") ?? searchParams.get("projectId");
 
     const prompts = await prisma.prompt.findMany({
-      where: { projectId },
-      orderBy: [{ category: "asc" }, { text: "asc" }],
-      include: { _count: { select: { results: true } } },
+      where: brandId ? { brandId } : undefined,
+      include: { brand: { select: { id: true, name: true } } },
+      orderBy: brandId
+        ? [{ category: "asc" }, { text: "asc" }]
+        : [{ brand: { name: "asc" } }, { category: "asc" }, { text: "asc" }],
     });
     return NextResponse.json({ prompts });
   } catch (error) {
@@ -39,12 +42,16 @@ export async function POST(request: Request) {
   if (guest) return guest;
   try {
     const payload = createSchema.parse(await request.json());
+    const brand = await prisma.brand.findUnique({ where: { id: payload.brandId }, select: { id: true } });
+    if (!brand) return jsonError("Brand not found.", 404);
+
     const prompt = await prisma.prompt.create({
       data: {
-        projectId: payload.projectId,
+        brandId: payload.brandId,
         text: payload.text.trim(),
         category: payload.category,
       },
+      include: { brand: { select: { id: true, name: true } } },
     });
     return NextResponse.json({ prompt }, { status: 201 });
   } catch (error) {

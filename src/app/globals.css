@@ -128,25 +128,6 @@
 }
 
 @layer components {
-  .btn-shine::after {
-    content: "";
-    pointer-events: none;
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(
-      110deg,
-      transparent 20%,
-      rgba(255, 255, 255, 0.22) 50%,
-      transparent 80%
-    );
-    transform: translateX(-140%);
-    transition: transform 0.55s ease;
-  }
-
-  .btn-shine:hover::after {
-    transform: translateX(140%);
-  }
-
   .print-row {
     position: relative;
     animation: print-in 0.42s ease both;
@@ -173,6 +154,84 @@
       hsl(var(--foreground) / 0.05) 23px
     );
     animation: print-feed 0.7s linear infinite;
+  }
+
+  .md-preview {
+    @apply text-sm leading-relaxed text-foreground;
+  }
+
+  .md-preview > :first-child {
+    @apply mt-0;
+  }
+
+  .md-preview > :last-child {
+    @apply mb-0;
+  }
+
+  .md-preview h1 {
+    @apply mb-3 text-xl font-semibold tracking-tight;
+  }
+
+  .md-preview h2 {
+    @apply mb-2 mt-4 text-lg font-semibold tracking-tight;
+  }
+
+  .md-preview h3,
+  .md-preview h4 {
+    @apply mb-2 mt-3 text-base font-semibold tracking-tight;
+  }
+
+  .md-preview p {
+    @apply mb-3;
+  }
+
+  .md-preview ul {
+    @apply mb-3 list-disc space-y-1 pl-5;
+  }
+
+  .md-preview ol {
+    @apply mb-3 list-decimal space-y-1 pl-5;
+  }
+
+  .md-preview li {
+    @apply leading-relaxed;
+  }
+
+  .md-preview a {
+    @apply text-sky-700 underline underline-offset-2 dark:text-sky-300;
+  }
+
+  .md-preview blockquote {
+    @apply mb-3 border-l-2 border-border pl-3 text-muted-foreground;
+  }
+
+  .md-preview pre {
+    @apply mb-3 overflow-x-auto rounded-md bg-background/80 p-3 font-mono text-xs;
+  }
+
+  .md-preview pre code {
+    @apply bg-transparent p-0;
+  }
+
+  .md-preview table {
+    @apply mb-3 w-full text-left text-xs;
+  }
+
+  .md-preview th,
+  .md-preview td {
+    @apply border-b border-border px-2 py-1.5 align-top;
+  }
+
+  .md-preview th {
+    @apply font-medium text-muted-foreground;
+  }
+
+  .md-preview hr {
+    @apply my-4 border-border;
+  }
+
+  .md-preview strong {
+    @apply font-semibold;
   }
 }
 

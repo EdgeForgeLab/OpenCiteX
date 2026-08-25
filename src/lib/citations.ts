@@ -71,17 +71,35 @@ export function hasTargetCitation(citations: string[], targetDomain: string) {
   return citationRank(citations, targetDomain) > 0;
 }
 
+export function citationRankByName(citations: string[], name: string) {
+  const needles = brandAliases(name, [], "");
+  if (needles.length === 0) return 0;
+  const hosts = citationHosts(citations);
+  const index = hosts.findIndex((host) => needles.some((needle) => hasToken(host, needle)));
+  return index >= 0 ? index + 1 : 0;
+}
+
 function escapeRegExp(value: string) {
   return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
 
 function hasToken(haystack: string, needle: string) {
   const token = needle.trim().toLowerCase();
-  if (token.length < 3) return false;
+  if (!token) return false;
+  const asciiOnly = /^[a-z0-9][a-z0-9 ._-]*$/i.test(token);
+  if (asciiOnly && token.length < 2) return false;
   const pattern = new RegExp(`(^|[^a-z0-9])${escapeRegExp(token)}([^a-z0-9]|$)`, "i");
   return pattern.test(haystack);
 }
 
+function isLatinNoiseToken(token: string) {
+  const value = token.trim().toLowerCase();
+  if (!value) return true;
+  if (GENERIC_TOKENS.has(value)) return true;
+  return /^[a-z0-9]+$/i.test(value) && value.length < 3;
+}
+
+/** True when an alias/slug is only generic English (e.g. "AI", "SEO tools"). */
 function isGenericAlias(value: string) {
   const tokens = value
     .toLowerCase()
@@ -89,17 +107,26 @@ function isGenericAlias(value: string) {
     .map((item) => item.trim())
     .filter(Boolean);
   if (tokens.length === 0) return true;
-  return tokens.every((token) => GENERIC_TOKENS.has(token) || token.length < 3);
+  return tokens.every(isLatinNoiseToken);
 }
 
 export function brandAliases(brandName: string, keywords: string[], domain: string) {
   const host = normalizeDomain(domain);
   const slug = host.split(".")[0] ?? "";
-  return unique(
-    [brandName, host, slug, ...keywords]
-      .map((item) => item.trim().toLowerCase())
-      .filter((item) => item.length >= 3 && !isGenericAlias(item)),
-  );
+  const needles: string[] = [];
+
+  const name = brandName.trim().toLowerCase();
+  if (name) needles.push(name);
+  if (host) needles.push(host);
+  if (slug && slug !== name && !isGenericAlias(slug)) needles.push(slug.toLowerCase());
+
+  for (const keyword of keywords) {
+    const alias = keyword.trim().toLowerCase();
+    if (!alias || alias === name || isGenericAlias(alias)) continue;
+    needles.push(alias);
+  }
+
+  return unique(needles);
 }
 
 export function textMentionsBrand(

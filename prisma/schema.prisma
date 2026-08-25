@@ -18,22 +18,38 @@ enum Engine {
   perplexity
   openai
   gemini
+  deepseek
+  qwen
 }
 
-model Project {
-  id            String   @id @default(cuid())
-  name          String
-  targetDomain  String
-  brandKeywords String[] @default([])
-  competitors   String[] @default([])
-  createdAt     DateTime @default(now())
-  prompts       Prompt[]
+enum JobStatus {
+  queued
+  running
+  completed
+  cancelled
+  failed
+}
+
+model Brand {
+  id                String   @id @default(cuid())
+  name              String
+  targetDomain      String
+  aliases           String[] @default([])
+  competitors       String[] @default([])
+  industryCategory  String?
+  description       String?
+  language          String   @default("en")
+  createdAt         DateTime @default(now())
+  prompts           Prompt[]
+  jobs              Job[]
 }
 
 model Credential {
   id         String   @id @default("workspace")
   ciphertext String
   hint       Json     @default("{}")
+  pace       Json     @default("{}")
+  analyzer   String?
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
 }
@@ -48,19 +64,42 @@ model Admin {
 
 model Prompt {
   id        String         @id @default(cuid())
-  projectId String
-  project   Project        @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  brandId   String
+  brand     Brand          @relation(fields: [brandId], references: [id], onDelete: Cascade)
   text      String
   category  PromptCategory
   results   Result[]
 
-  @@index([projectId])
+  @@index([brandId])
+}
+
+model Job {
+  id             String    @id @default(cuid())
+  brandId        String
+  brand          Brand     @relation(fields: [brandId], references: [id], onDelete: Cascade)
+  engines        Engine[]
+  status         JobStatus @default(queued)
+  total          Int
+  completed      Int       @default(0)
+  errors         Int       @default(0)
+  currentPrompt  String?
+  currentEngine  Engine?
+  metrics        Json?
+  createdAt      DateTime  @default(now())
+  startedAt      DateTime?
+  finishedAt     DateTime?
+  results        Result[]
+
+  @@index([brandId, createdAt])
+  @@index([status])
 }
 
 model Result {
   id           String   @id @default(cuid())
   promptId     String
   prompt       Prompt   @relation(fields: [promptId], references: [id], onDelete: Cascade)
+  jobId        String?
+  job          Job?     @relation(fields: [jobId], references: [id], onDelete: SetNull)
   engine       Engine
   isMentioned  Boolean
   hasCitation  Boolean
@@ -70,4 +109,5 @@ model Result {
   createdAt    DateTime @default(now())
 
   @@index([promptId, engine, createdAt])
+  @@index([jobId])
 }

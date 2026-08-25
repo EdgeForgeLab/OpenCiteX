@@ -20,8 +20,6 @@ const buttonVariants = cva(
           "bg-destructive text-destructive-foreground hover:bg-rose-500 hover:shadow-[0_10px_24px_-12px_rgba(244,63,94,0.6)]",
         link:
           "text-primary underline-offset-4 hover:text-foreground hover:underline hover:translate-y-0",
-        cta:
-          "btn-shine relative overflow-hidden border border-violet-400/30 bg-gradient-to-r from-violet-600 to-indigo-600 text-white shadow-lg shadow-violet-500/20 hover:border-violet-300/60 hover:from-violet-500 hover:to-indigo-500 hover:shadow-xl hover:shadow-violet-500/40",
       },
       size: {
         default: "h-9 px-4 py-2",

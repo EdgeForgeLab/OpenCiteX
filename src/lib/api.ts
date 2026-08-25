@@ -1,7 +1,8 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 
-export const engineSchema = z.enum(["perplexity", "openai", "gemini"]);
+export const engineSchema = z.enum(["perplexity", "openai", "gemini", "deepseek", "qwen"]);
+export const languageSchema = z.enum(["en", "zh", "fr", "es"]);
 
 export function jsonError(message: string, status = 400) {
   return NextResponse.json({ error: message }, { status });

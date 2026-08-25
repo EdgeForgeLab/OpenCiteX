@@ -1,4 +1,5 @@
 import { queryGemini } from "@/lib/engines/gemini";
+import { queryDeepSeek, queryQwen } from "@/lib/engines/compatible";
 import { queryOpenAI } from "@/lib/engines/openai";
 import { queryPerplexity } from "@/lib/engines/perplexity";
 import type { ApiKeys, EngineId, EngineOutput } from "@/lib/types";
@@ -18,6 +19,12 @@ export async function queryEngine(
     case "gemini":
       if (!keys.gemini) throw new Error("Missing Gemini API key.");
       return queryGemini(keys.gemini, prompt);
+    case "deepseek":
+      if (!keys.deepseek) throw new Error("Missing DeepSeek API key.");
+      return queryDeepSeek(keys.deepseek, prompt);
+    case "qwen":
+      if (!keys.qwen) throw new Error("Missing Qwen API key.");
+      return queryQwen(keys.qwen, prompt);
     default:
       throw new Error(`Unsupported engine: ${engine}`);
   }

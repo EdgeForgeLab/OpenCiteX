@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { jsonError } from "@/lib/api";
 import { unauthorizedIfGuest } from "@/lib/auth";
+import { visibilityHistoryForBrand } from "@/lib/jobs";
 import { computeMetrics, toResultRow } from "@/lib/metrics";
 
 export const dynamic = "force-dynamic";
@@ -11,20 +12,20 @@ export async function GET(request: Request) {
   if (guest) return guest;
   try {
     const { searchParams } = new URL(request.url);
-    const projectId = searchParams.get("projectId");
-    if (!projectId) return jsonError("projectId is required.");
+    const brandId = searchParams.get("brandId") ?? searchParams.get("projectId");
+    if (!brandId) return jsonError("brandId is required.");
 
-    const project = await prisma.project.findUnique({
-      where: { id: projectId },
+    const brand = await prisma.brand.findUnique({
+      where: { id: brandId },
       include: { prompts: true },
     });
-    if (!project) return jsonError("Project not found.", 404);
+    if (!brand) return jsonError("Brand not found.", 404);
 
     const results = await prisma.result.findMany({
-      where: { prompt: { projectId } },
+      where: { prompt: { brandId } },
       orderBy: { createdAt: "desc" },
       include: {
-        prompt: { include: { project: true } },
+        prompt: { include: { brand: true } },
       },
     });
 
@@ -36,12 +37,13 @@ export async function GET(request: Request) {
 
     const rows = Array.from(latestByKey.values()).map(toResultRow);
     const metrics = computeMetrics(rows);
+    const history = await visibilityHistoryForBrand(brandId);
 
     return NextResponse.json({
-      project,
-      rows,
+      brand,
       metrics,
-      promptCount: project.prompts.length,
+      history,
+      promptCount: brand.prompts.length,
     });
   } catch (error) {
     return jsonError(

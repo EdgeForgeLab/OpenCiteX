@@ -18,7 +18,7 @@ export function HeroCopy() {
       </h1>
       <p className="mt-4 text-base leading-relaxed text-muted-foreground">
         <PrintText
-          text="OpenCiteX probes Perplexity, GPT-4o, and Gemini with your own keys, then scores mention, citation, and competitor intercept — so you know where generative search erases your brand."
+          text="OpenCiteX probes Perplexity, OpenAI, Gemini, DeepSeek, and Qwen with your own keys, then scores mention, citation, and competitor intercept — so you know where generative search erases your brand."
           speed={8}
           delay={1700}
           caret={false}
