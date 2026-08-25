@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>OpenCiteX docs</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="OpenCiteX documentation: install, deploy, scoring, and engines for the GEO visibility radar."
+    />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/docsify@4/lib/themes/vue.css" />
+    <style>
+      :root {
+        --theme-color: #18181b;
+        --sidebar-width: 16rem;
+      }
+
+      .sidebar {
+        width: var(--sidebar-width);
+        padding-top: 1.25rem;
+        border-right: 1px solid #e4e4e7;
+        background: #fafafa;
+      }
+
+      .sidebar .app-name {
+        font-size: 1.15rem;
+        font-weight: 650;
+        padding-left: 0.25rem;
+      }
+
+      .sidebar ul li a {
+        font-size: 0.9rem;
+      }
+
+      .sidebar-nav {
+        padding: 0.5rem 0 2rem;
+      }
+
+      .content {
+        left: var(--sidebar-width);
+        padding-top: 1.25rem;
+      }
+
+      .markdown-section {
+        max-width: 46rem;
+        padding: 0 2.25rem 3rem;
+      }
+
+      @media screen and (max-width: 768px) {
+        .content {
+          left: 0;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app">Loading…</div>
+    <script>
+      window.$docsify = {
+        name: "OpenCiteX",
+        nameLink: "#/",
+        repo: "EdgeForgeLab/OpenCiteX",
+        homepage: "README.md",
+        loadSidebar: true,
+        alias: {
+          "/.*/_sidebar.md": "/_sidebar.md",
+        },
+        autoHeader: false,
+        subMaxLevel: 2,
+        auto2top: true,
+        routerMode: "hash",
+        search: {
+          placeholder: "Search docs",
+          noData: "No results",
+        },
+      };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/docsify@4"></script>
+    <script src="https://cdn.jsdelivr.net/npm/docsify@4/lib/plugins/search.min.js"></script>
+  </body>
+</html>

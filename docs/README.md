@@ -43,4 +43,4 @@ MVP: one operator, many brands, no SSO or team roles. Fine for a laptop, a small
 
 ## License
 
-[MIT](../LICENSE)
+[MIT](https://github.com/edgeforgelab/OpenCiteX/blob/main/LICENSE)
