@@ -12,6 +12,10 @@ Self-hosted. Your keys. One admin password. No SaaS markup.
 
 **Documentation:** [docs/](docs/README.md) — install, deploy, scoring, and FAQ.
 
+<p align="center">
+  <img src="docs/images/dashboard.png" alt="OpenCiteX visibility dashboard: AI visibility, citation rate, intercepts, trend, and per-provider mention rates" />
+</p>
+
 ## Features
 
 - **BYOK** — Perplexity, OpenAI, Gemini, DeepSeek, and Qwen keys are encrypted with AES-256-GCM in Postgres and never sent back to the browser
@@ -21,6 +25,18 @@ Self-hosted. Your keys. One admin password. No SaaS markup.
 - **Prompt matrix** — each brand stores name, domain, aliases, competitors, category, and language; saving expands Brand / Category / Competitor / Scenario probes
 - **Queue-friendly** — client-side sequential jobs with backoff, so a first scan does not burn rate limits or serverless timeouts
 - **Deploy your way** — Vercel + Supabase, or Postgres in Docker and the app on Node
+
+## Screenshots
+
+Sequential BYOK scans, then every probe × provider in Results:
+
+<p align="center">
+  <img src="docs/images/scan.png" alt="Scan history: brand, providers, progress, and job status" />
+</p>
+
+<p align="center">
+  <img src="docs/images/result.png" alt="Results table: probe type, engine, cited or mentioned status, and intercepts" />
+</p>
 
 ## Stack
 
