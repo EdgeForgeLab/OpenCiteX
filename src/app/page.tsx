@@ -85,10 +85,16 @@ export default function HomePage() {
             </div>
             <div className="mt-6 flex flex-wrap gap-3">
               <Button size="lg" asChild>
-                <Link href="/dashboard">Launch visibility scan</Link>
+                <a href={GITHUB_URL} target="_blank" rel="noopener noreferrer">
+                  <Github />
+                  Visit GitHub
+                </a>
               </Button>
               <Button size="lg" variant="outline" asChild>
-                <Link href="/byok">Paste BYOK keys</Link>
+                <a href={DOCS_URL} target="_blank" rel="noopener noreferrer">
+                  <BookOpen />
+                  Read the docs
+                </a>
               </Button>
             </div>
           </div>
