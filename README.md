@@ -6,9 +6,11 @@
 [![Next.js](https://img.shields.io/badge/Next.js-14-black)](https://nextjs.org/)
 [![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/edgeforgelab/OpenCiteX)
 
-**OpenCiteX** is a privacy-first, BYOK monitor for Perplexity, GPT-4o, and Gemini. It scores whether those engines mention your brand, cite your domain, or hand the answer to a competitor.
+**OpenCiteX** is a privacy-first, BYOK monitor for Perplexity, OpenAI, Gemini, DeepSeek, and Qwen. It scores whether those engines mention your brand, cite your domain, or hand the answer to a competitor.
 
 Self-hosted. Your keys. One admin password. No SaaS markup.
+
+**Documentation:** [docs/](docs/README.md) — install, deploy, scoring, and FAQ.
 
 ## Features
 
@@ -64,13 +66,11 @@ Open [http://localhost:3000](http://localhost:3000):
 
 The seed workspace includes a MetaCitex example brand. Change it under Brands.
 
+For environment variables, Vercel migrations, scoring rules, and FAQ, see **[the docs](docs/README.md)**.
+
 ## Deploy on Vercel
 
-1. Clone [this repo](https://github.com/edgeforgelab/OpenCiteX) with the Deploy button, or import it in Vercel
-2. Attach Supabase Postgres: pooled URI as `DATABASE_URL`, direct URI as `DIRECT_URL`
-3. Set `ENCRYPTION_KEY` (`openssl rand -hex 32`)
-4. On release, run `npx prisma migrate deploy` against `DIRECT_URL`
-5. Open the deployment → `/setup` → paste keys in Settings
+Import the repo, set `DATABASE_URL` (pooled) and `ENCRYPTION_KEY`, then apply Prisma migrations with a **direct** Postgres URL. Step-by-step (including why `migrate deploy` is not part of `npm run build`): **[Deployment](docs/deployment.md)**.
 
 Do **not** put provider API keys in Vercel env.
 
@@ -83,7 +83,7 @@ Single operator, no email, no signup.
 | Forgot the password | `/recover` with the recovery code |
 | Lost password **and** recovery code | `npm run auth:reset`, then `/setup` again |
 
-`auth:reset` clears only the admin record. Projects, prompts, results, and encrypted keys stay put.
+`auth:reset` clears only the admin record. Brands, prompts, results, and encrypted keys stay put.
 
 If the instance is on the public internet, put it behind a reverse proxy, VPN, or similar. Encryption at rest is not a substitute.
 
