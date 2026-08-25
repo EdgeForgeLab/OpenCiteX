@@ -73,7 +73,7 @@ npx prisma db seed
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000):
+`/` is the product landing page. First run: open [http://localhost:3000/setup](http://localhost:3000/setup). After that, sign in at [`/login`](http://localhost:3000/login).
 
 1. **`/setup`** — admin password + recovery code (shown once)
 2. **`/byok`** — paste Perplexity, OpenAI, Gemini, DeepSeek, and Qwen keys (shared across brands)

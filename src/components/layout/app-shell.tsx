@@ -116,22 +116,24 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                 ))}
               </div>
             ))}
+            <div className="flex flex-col gap-1">
+              <p className="px-3 pb-0.5 text-[9px] font-normal uppercase tracking-[0.18em] text-muted-foreground/50">
+                Profile
+              </p>
+              <button
+                type="button"
+                onClick={() => void signOut()}
+                className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-muted-foreground transition-all duration-200 hover:translate-x-0.5 hover:bg-accent hover:text-foreground hover:[&_svg]:scale-110 [&_svg]:transition-transform [&_svg]:duration-200"
+              >
+                <LogOut className="h-4 w-4" />
+                Sign out
+              </button>
+            </div>
           </nav>
           <div className="mt-auto space-y-3 px-1">
             <ThemeToggle className="w-full justify-center" />
-            <button
-              type="button"
-              onClick={() => void signOut()}
-              className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm text-muted-foreground transition-all duration-200 hover:bg-accent hover:text-foreground"
-            >
-              <LogOut className="h-4 w-4" />
-              Sign out
-            </button>
-            <p className="px-2 text-[11px] leading-relaxed text-muted-foreground">
-              BYOK GEO radar. Keys are encrypted in Postgres and never sent back to the browser.
-            </p>
             <p className="px-2 text-[11px] text-muted-foreground">
-              Powered by{" "}
+              Open-sourced by{" "}
               <a
                 href="https://www.metacitex.com/"
                 target="_blank"
@@ -149,16 +151,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
               <Link href="/" className="font-sans text-lg font-semibold tracking-tight">
                 OpenCiteX
               </Link>
-              <div className="flex items-center gap-3">
-                <ThemeToggle />
-                <button
-                  type="button"
-                  onClick={() => void signOut()}
-                  className="text-sm text-muted-foreground hover:text-foreground"
-                >
-                  Sign out
-                </button>
-              </div>
+              <ThemeToggle />
             </div>
             <nav className="flex items-start gap-6 overflow-x-auto px-4 pb-3">
               {NAV_GROUPS.map((group) => (
@@ -182,11 +175,26 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                   </div>
                 </div>
               ))}
+              <div className="flex flex-col gap-1">
+                <p className="text-[9px] font-normal uppercase tracking-[0.18em] text-muted-foreground/50">
+                  Profile
+                </p>
+                <div className="flex gap-1">
+                  <button
+                    type="button"
+                    onClick={() => void signOut()}
+                    className="flex items-center gap-2 rounded-lg px-2 py-1.5 text-sm text-muted-foreground transition-all duration-200 hover:bg-accent hover:text-foreground hover:[&_svg]:scale-110 [&_svg]:transition-transform [&_svg]:duration-200"
+                  >
+                    <LogOut className="h-4 w-4" />
+                    Sign out
+                  </button>
+                </div>
+              </div>
             </nav>
           </header>
           <main className="min-w-0 flex-1 px-4 py-6 md:px-8 md:py-8">{children}</main>
           <p className="px-4 pb-4 text-[11px] text-muted-foreground md:hidden">
-            Powered by{" "}
+            Open-sourced by{" "}
             <a
               href="https://www.metacitex.com/"
               target="_blank"

@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowRight, BookOpen, Github, KeyRound, Radar, Rows3 } from "lucide-react";
+import { BookOpen, Github, KeyRound, Radar, Rows3 } from "lucide-react";
 import { ThemeToggle } from "@/components/theme/theme-toggle";
 import { ProviderLogo } from "@/components/providers/provider-logo";
 import { Button } from "@/components/ui/button";
@@ -57,12 +57,6 @@ export default function HomePage() {
             <Github className="h-4 w-4" />
           </a>
           <ThemeToggle />
-          <Button asChild>
-            <Link href="/dashboard">
-              Open dashboard
-              <ArrowRight />
-            </Link>
-          </Button>
         </div>
       </header>
 
@@ -127,6 +121,20 @@ export default function HomePage() {
           ))}
         </div>
       </main>
+
+      <footer className="relative mx-auto max-w-6xl px-6 pb-10">
+        <p className="text-[11px] text-muted-foreground">
+          Open-sourced by{" "}
+          <a
+            href="https://www.metacitex.com/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-foreground underline-offset-4 hover:underline"
+          >
+            MetaCiteX
+          </a>
+        </p>
+      </footer>
     </div>
   );
 }

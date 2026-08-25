@@ -35,7 +35,7 @@ npx prisma db seed
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000).
+`/` is the product landing page. For first run, open [http://localhost:3000/setup](http://localhost:3000/setup). After you have a password, sign in at [`/login`](http://localhost:3000/login).
 
 ## 3. First-run checklist
 
