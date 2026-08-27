@@ -140,6 +140,10 @@ The landing-page monitor card is **demo data**, not a live scan.
 
 MVP for one brand on a laptop or a small VPS. Not multi-tenant: one admin, no SSO, no team roles.
 
+## Contact
+
+[support@metacitex.com](mailto:support@metacitex.com)
+
 ## License
 
 [MIT](LICENSE)
