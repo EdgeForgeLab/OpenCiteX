@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 import { ThemeProvider } from "@/components/theme/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
+import { siteOrigin } from "@/lib/site-url";
 import "./globals.css";
 
 const geistSans = localFont({
@@ -17,6 +18,7 @@ const geistMono = localFont({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(siteOrigin()),
   title: "OpenCiteX — GEO visibility dashboard",
   description:
     "Open-source generative engine optimization radar. Measure brand mentions and citations across Perplexity, OpenAI, Gemini, DeepSeek, and Qwen.",

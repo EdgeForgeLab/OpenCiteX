@@ -111,6 +111,7 @@ If the instance is on the public internet, put it behind a reverse proxy, VPN, o
 | `ENCRYPTION_KEY` | Yes | 64-char hex. Encrypts BYOK keys and signs the session cookie |
 | `AUTH_SECRET` | Optional | Session HMAC secret. Defaults to `ENCRYPTION_KEY` |
 | `DIRECT_URL` | Optional | Direct (non-pooled) Postgres URI for Prisma migrations on Supabase |
+| `NEXT_PUBLIC_APP_URL` | Optional | Public origin for canonical URLs, robots.txt, and sitemap. Official site: `https://opencitex.com` |
 
 Rotating `ENCRYPTION_KEY` makes previously stored API keys unreadable. Paste them again in Settings after a rotation.
 

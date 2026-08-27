@@ -19,7 +19,7 @@ Rotating `ENCRYPTION_KEY` makes previously stored provider keys unreadable. Past
 | --- | --- |
 | `AUTH_SECRET` | Session HMAC secret. Defaults to `ENCRYPTION_KEY` |
 | `DIRECT_URL` | Direct (non-pooled) Postgres URI. Documented for Supabase **migrations**. The schema currently reads `DATABASE_URL` only — see [Deployment](deployment.md) |
-| `NEXT_PUBLIC_APP_URL` | Public origin (local default `http://localhost:3000`) |
+| `NEXT_PUBLIC_APP_URL` | Public origin for canonical URLs, `robots.txt`, and `sitemap.xml`. Local default `http://localhost:3000`. Official site: `https://opencitex.com` |
 
 ## Local Docker
 
